@@ -32,5 +32,9 @@
 // have completed. Callers should skip GC when nothing was generated to avoid
 // expensive API discovery on no-op reconciles.
 //
+// On OpenShift, prefer rbac.authorization.k8s.io over authorization.openshift.io
+// RBAC aliases when both delete and list are authorized, so GVK-keyed desired-set
+// GC does not treat the OpenShift view as an orphan.
+//
 // See AGENTS.md for detailed usage patterns and examples.
 package gc

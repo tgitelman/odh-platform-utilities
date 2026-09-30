@@ -205,12 +205,18 @@ func (a *Action) computeDeletableTypes(ctx context.Context, rr *odhTypes.Reconci
 		return nil, fmt.Errorf("unable to compute namespace: %w", err)
 	}
 
-	items, err := rules.ListAuthorizedResources(ctx, rr.Client, res, ns, []string{rules.VerbDelete})
+	deletable, err := rules.ListAuthorizedResources(ctx, rr.Client, res, ns, []string{rules.VerbDelete})
 	if err != nil {
 		return nil, fmt.Errorf("failure listing authorized deletable resources: %w", err)
 	}
 
-	return items, nil
+	listable, err := rules.ListAuthorizedResources(ctx, rr.Client, res, ns, []string{rules.VerbList})
+	if err != nil {
+		return nil, fmt.Errorf("failure listing authorized listable resources: %w", err)
+	}
+
+	// Prefer k8s RBAC over OpenShift aliases when both delete and list are authorized.
+	return preferKubernetesRBACResources(deletable, listable), nil
 }
 
 func (a *Action) listResources(

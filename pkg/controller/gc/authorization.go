@@ -22,6 +22,9 @@ const (
 	// VerbDelete represents the Kubernetes delete permission verb.
 	VerbDelete = "delete"
 
+	// VerbList represents the Kubernetes list permission verb.
+	VerbList = "list"
+
 	// VerbAny represents a wildcard for any permission verb.
 	VerbAny = "*"
 

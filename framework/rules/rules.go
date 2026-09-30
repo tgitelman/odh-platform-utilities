@@ -19,6 +19,7 @@ import (
 
 const (
 	VerbDelete  = "delete"
+	VerbList    = "list"
 	VerbAny     = "*"
 	ResourceAny = "*"
 )

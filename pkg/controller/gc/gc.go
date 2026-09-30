@@ -198,12 +198,18 @@ func (c *Collector) computeDeletableTypes(
 		return nil, fmt.Errorf("unable to compute namespace: %w", err)
 	}
 
-	items, err := ListAuthorizedResources(ctx, params.Client, res, ns, []string{VerbDelete})
+	deletable, err := ListAuthorizedResources(ctx, params.Client, res, ns, []string{VerbDelete})
 	if err != nil {
 		return nil, fmt.Errorf("failure listing authorized deletable resources: %w", err)
 	}
 
-	return items, nil
+	listable, err := ListAuthorizedResources(ctx, params.Client, res, ns, []string{VerbList})
+	if err != nil {
+		return nil, fmt.Errorf("failure listing authorized listable resources: %w", err)
+	}
+
+	// Prefer k8s RBAC over OpenShift aliases when both delete and list are authorized.
+	return preferKubernetesRBACResources(deletable, listable), nil
 }
 
 func (c *Collector) resolveNamespace(ctx context.Context) (string, error) {
